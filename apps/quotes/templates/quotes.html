@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Quotes</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style media="screen">
+      .left{
+        border: 2px solid black;
+        display: inline-block;
+        vertical-align: top;
+        width: 350px;
+        margin: 10px;
+        margin-left: 50px;
+      }
+      .right{
+        display: inline-block;
+        vertical-align: top;
+        width: 350px;
+        margin: 10px;
+        margin-left: 30%
+
+      }
+      .favquote{
+        height: 300px;
+        overflow: scroll;
+        border: 2px solid black;
+      }
+      .quote{
+        margin: 10px;
+        border: 1px solid black;
+        padding: 10px;
+      }
+      h2{
+        text-align: center;
+      }
+      h1{
+        display: inline;
+        margin: 40px 10px 10px 10px;
+        padding: 10px;
+
+      }
+      #logout{
+        margin-left: 60%
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome, {{user.first_name}}</h1>
+    <a href="/logout" id = "logout">Logout</a>
+    <hr>
+    <div class="left" class="col-sm-6">
+      <h2>Quotable Quotes</h2>
+      <hr>
+      {% for quote in quotes %}
+        {% if user  not in quote.faves.all %}
+          <div class="quote">
+            {{quote.quotedby}} : {{quote.quote}}
+            <p>Posted by <a href="/users/{{quote.postedby.id}}">{{quote.postedby.first_name}}</a></p>
+            <form class="" action="/favquote/{{quote.id}}" method="post">
+                {% csrf_token %}
+                <input type="submit" name="submit" value="Add to My list">
+            </form>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="right" class="col-sm-6">
+      <div class="favquote">
+        <h2>Your Favorites</h2>
+        <hr>
+        {% for quote in quotes %}
+          {% if user in quote.faves.all %}
+            <div class="quote">
+              {{quote.quotedby}} : {{quote.quote}}
+              <p>Posted by <a href="/users/{{quote.postedby.id}}">{{quote.postedby.first_name}}</a></p>
+              <form class="" action="removefavquote/{{quote.id}}" method="post">
+                  {% csrf_token %}
+                  <input type="submit" name="submit" value="Remove From My list">
+              </form>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="addquote">
+        <h3>Contribute a Quote</h3>
+        <form class="" action="/postquote" method="post">
+            {% if messages %}
+              {% for message in messages %}
+                <p{% if message.tags %} class="{{ message.tags }}"{% endif %} id = "red">{{ message }}</p>
+              {% endfor %}
+            {% endif %}
+          {% csrf_token %}
+          <label for="quotedby"> Quoted By: </label>
+          <span style="padding-left:55px"></span>
+          <input type="text" id="quotedby" name="quotedby"> <br>
+          <label for="quote"> Message: </label>
+          <textarea name="quote" id = "quote" rows="4" cols="40"></textarea> <br>
+          <input type="submit" name="submit" value="Submit">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
