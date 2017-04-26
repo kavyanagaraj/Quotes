@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 import bcrypt, datetime, time
 from datetime import datetime
 
+def main(request):
+    return redirect('/main')
 
 def index(request):
     return render(request, "index.html")
@@ -71,12 +73,12 @@ def register(request):
     }
     if  User.objects.all().filter(email = email):
         messages.add_message(request, messages.INFO, "Email already exists! Please login")
-        return redirect('/')
+        return redirect('/main')
     error = User.objects.validate(context)
     if error:
         for ele in error:
             messages.add_message(request, messages.ERROR, ele)
-        return redirect('/')
+        return redirect('/main')
     else:
         hashedpwd = bcrypt.hashpw(pwd, bcrypt.gensalt())
         user = User.objects.create(first_name = fname, last_name = lname, email = email, password = hashedpwd, birthday = bday)
@@ -90,15 +92,15 @@ def login(request):
     user = User.objects.all().filter(email = email)
     if  not user:
         messages.add_message(request, messages.INFO, "Email doesn't exist! Please register")
-        return redirect('/')
+        return redirect('/main')
     else:
         if user[0].password != bcrypt.hashpw(pwd, (user[0].password).encode()):
             messages.add_message(request, messages.INFO, "Invalid password")
-            return redirect('/')
+            return redirect('/main')
         else:
             request.session['uid'] = user[0].id
             return redirect('/quotes')
 
 def logout(request):
     request.session.clear()
-    return redirect('/')
+    return redirect('/main')
