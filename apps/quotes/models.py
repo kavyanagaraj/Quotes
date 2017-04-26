@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 import re
-import datetime
+import datetime, time
 from datetime import datetime
 
 class UserManager(models.Manager):
@@ -18,6 +18,8 @@ class UserManager(models.Manager):
             error.append("Minimum of 8 characters required for password")
         if data['pwd'] != data['conpwd']:
             error.append("Password doesn't match")
+        if not data['bday']:
+            error.append("Please enter a valid date")
         return error
 
 class User(models.Model):

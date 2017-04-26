@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from .models import User, Quote
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-import bcrypt, datetime
+import bcrypt, datetime, time
 from datetime import datetime
 
 
@@ -61,7 +61,6 @@ def register(request):
     bday = request.POST['bday'].encode()
     pwd = request.POST['password'].encode()
     conpwd = request.POST['confirm_password'].encode()
-    bday = datetime.strptime(bday, '%Y-%m-%d')
     context = {
     "fname" : fname,
     "lname" : lname,
